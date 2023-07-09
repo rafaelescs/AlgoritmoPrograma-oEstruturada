@@ -1,0 +1,278 @@
+#include<stdio.h>
+#include<stdlib.h>
+#include<string.h>
+#include <ctype.h>
+#include<math.h>
+#include<time.h>
+
+#define TAMANHO_STRING 50
+
+typedef struct informacoes{
+    int ID;
+    char nome[TAMANHO_STRING], email[TAMANHO_STRING], sexo [TAMANHO_STRING],endereco[TAMANHO_STRING];
+    double altura;
+    int vacina;
+    struct informacoes *ponteiro;
+}informacoes;
+
+
+informacoes* inicializar(){
+	return NULL; 
+}
+
+informacoes* preencherInformações(informacoes* lista){
+informacoes* novo = (informacoes*) malloc(sizeof(informacoes));
+
+
+
+srand(time(NULL));
+novo->id = 1 + rand() % 1000;
+printf("\nDigite seu nome completo: ");
+fgets(novo->nome,TAMANHO_STRING,stdin);
+fflush(stdin);
+
+
+int checar=0;
+    do {
+      printf("Digite seu email:\n ");
+      fgets(novo->email, TAMANHO_STRING, stdin);
+      fflush(stdin);
+      if (strstr(novo->email, "@") == NULL) {
+        printf("Email incorrento. Tente novamente!\n");
+      } 
+      else if (strstr(novo->email, ".com") == NULL && strstr(novo->email, ".br") == NULL) {
+        printf("Email incorrento. Tente novamente!\n");
+      }
+      else {
+        checar = 1;
+      }
+      
+      } while (!checar);
+
+     do{
+     printf("Digite o sexo. Caso nao queira identificar, digite indiferente: ");
+     gets (novo->sexo);
+     fflush(stdin);
+     }while((strcmp(novo->sexo, "feminino")!=0) && (strcmp(novo->sexo, "masculino")!=0) && (strcmp(novo->sexo, "indiferente")!=0));
+
+     printf("Digite o endereco:");
+     fgets(novo->endereco,TAMANHO_STRING,stdin);
+     
+    do{
+        printf("Digite sua altura:");
+        scanf("%lf",&novo->altura);
+        fflush (stdin);
+
+    if(novo->altura<1 || novo->altura>2){
+            printf("Opcao incorreta. Tente novamente!\n");
+        }
+    }while(novo->altura<1 || novo->altura>2);
+    
+    do {
+        printf("Esta pessoa esta vacinada? 0 para sim, 1 para não: ");
+        scanf("%d", &novo->vacina);
+        fflush(stdin);
+        if (novo->vacina == 0) {
+        printf("Pessoa vacinada.\n");} 
+        else if (novo->vacina == 1) {
+        printf("Pessoa não vacinada.\n");} 
+        else {
+        printf("Opcao incorreta. Tente novamente.\n");}
+
+    } while (novo->vacina != 0 && novo->vacina != 1);
+    novo->ponteiro=lista;
+	return novo;
+}
+informacoes* editaLista(informacoes* lista){
+	 informacoes*auxiliar; 
+     int opcao2;
+     char email[TAMANHO_STRING], opcao3[3], opcao4[3];
+	 int contador=0, tamanho=0; 
+    printf("Digite o email da pessoa que deseja buscar: ");
+    fgets(email, TAMANHO_STRING, stdin);
+
+ for(auxiliar=lista;auxiliar!=NULL;auxiliar=auxiliar->ponteiro) {
+	tamanho++;
+
+    if (strcmp(auxiliar->email,email) == 0) {
+        printf("Cadastro localizado.\n");
+        printf("ID: %d\n", auxiliar->id);
+        printf("Nome: %s\n", auxiliar->nome);
+        printf("Email: %s\n", auxiliar->email);
+        printf("Sexo: %s\n", auxiliar->sexo);
+        printf("Endereco: %s\n", auxiliar->endereco);
+        printf("Altura: %.2f\n", auxiliar->altura);
+        printf("Vacina: %d\n", auxiliar->vacina);
+        printf("Editar as informacoes dessa pessoa?");
+        gets(opcao3);
+        fflush(stdin);
+
+    if (strcmp(opcao3, "sim") == 0) {
+        printf("Digite o número do campo que deseja alterar:\n");
+        printf("1 - Nome\n");
+        printf("2 - Email\n");
+        printf("3 - Sexo\n");
+        printf("4 - Endereço\n");
+        printf("5 - Altura\n");
+        printf("6 - Vacina\n");
+        scanf("%d", &opcao2);
+        getchar();
+     	do{
+      	switch (opcao2) {
+
+     	case 1:
+            printf("Digite o novo nome: ");
+            fgets(auxiliar->nome, TAMANHO_STRING, stdin);
+	      		fflush(stdin);
+             break;
+
+      	case 2:
+            printf("Digite o novo email: ");
+            fgets(auxiliar->email, TAMANHO_STRING, stdin);
+		      	fflush(stdin);
+            break;
+
+      	case 3:
+            printf("Digite o novo sexo: ");
+            fgets(auxiliar->sexo, 10, stdin);
+		      	fflush(stdin);
+            break;
+
+      	  case 4:
+            printf("Digite o novo endereço: ");
+            fgets(auxiliar->endereco, TAMANHO_STRING, stdin);
+			      fflush(stdin);
+            break;
+
+      	  case 5: 
+            printf("Digite a nova altura: ");
+            scanf("%lf", &auxiliar->altura);
+            fflush(stdin);
+
+            break;
+
+      	  case 6:
+            printf("Digite a nova vacina (0 = sim, 1 = não): ");
+            scanf("%d", &auxiliar->vacina);
+            fflush(stdin);
+
+            break;
+
+      	  default:
+            printf("Opcao invalida.\n");
+             break;
+                }
+
+      	  printf("Deseja editar outro dado dessa pessoa?");
+       	 gets(opcao4);
+      	  fflush(stdin);
+
+     	   }while (strcmp(opcao4, "sim")==0);
+            }
+	}else contador++;
+  }
+        if (tamanho == contador){
+      	  printf("Email nao encontrado.\n");
+		  }
+       return lista;
+}
+
+
+informacoes* deletarinformacoes(informacoes* lista){
+  char opcao[3];
+informacoes*auxiliar; 
+informacoes*anterior;
+	char email[TAMANHO_STRING];
+
+    printf("Digite o email que deseja excluir: ");
+    fgets(email,TAMANHO_STRING, stdin);
+
+    for(auxiliar=lista;auxiliar!=NULL;auxiliar=auxiliar->ponteiro) {
+
+        if (strcmp(auxiliar->email,email) == 0) {
+        printf("------------Pessoa encontrada-------------\n");
+        printf("ID: %d\n", auxiliar->id);
+        printf("Nome: %s\n", auxiliar->nome);
+        printf("Email: %s\n", auxiliar->email);
+        printf("Sexo: %s\n", auxiliar->sexo);
+        printf("Endereco: %s\n", auxiliar->endereco);
+        printf("Altura: %.2f\n", auxiliar->altura);
+        printf("Vacina: %d\n", auxiliar->vacina);    
+        printf("Tem certeza que esse cadastro é para ser excluído?");
+      gets(opcao);
+      fflush(stdin);
+
+    if (strcmp(opcao, "sim\n") == 0) {
+    if (anterior == NULL) {
+        lista = auxiliar->ponteiro;
+    } else {
+        anterior->ponteiro = auxiliar->ponteiro;
+    }
+
+    free(auxiliar);
+
+    printf("Cadastro excluído com sucesso!\n");
+    return lista;}
+else {
+    printf("Exclusão cancelada.\n");}}
+else{
+   printf("Cadastro nao localizado.");}
+}
+}
+void imprimirinformacoes(informacoes* lista){
+informacoes* auxiliar;
+	for(auxiliar=lista;auxiliar!=NULL;auxiliar=auxiliar->ponteiro){
+		printf("------------------------\n");
+        printf("ID: %d\n", auxiliar->id);
+        printf("Nome: %s\n", auxiliar->nome);
+        printf("Email: %s\n", auxiliar->email);
+        printf("Sexo: %s\n", auxiliar->sexo);
+        printf("Endereco: %s\n", auxiliar->endereco);
+        printf("Altura: %.2f\n", auxiliar->altura);
+        printf("Vacina: %d\n", auxiliar->vacina);
+
+	}
+}
+
+int main(){
+    char escolha,opcao[5];
+    informacoes* lista;
+
+    lista= inicializar();
+    
+    do {
+        printf("Digite 1 para acrescentar\nDigite 2 para excluir.\nDigite 3 para buscar e editar.\nDigite 4 para imprimir\n");
+        scanf(" %c", &escolha);
+        fflush(stdin);
+
+     switch (escolha) {
+
+        case '1':printf("Funcao acrescentar selecionada.\n");
+        lista= preencherinformacoes(lista);
+        break;
+
+        case '2':
+        printf("Funcao excluir selecionada.\n");
+        lista=deletarinformacoes(lista);
+        break;
+
+        case '3': printf("Funcao de busca e edicao selecionada.\n");
+        lista =editaLista(lista);
+        break;
+
+        case '4': printf("Funcao de imprimir selecionada.\n");
+        imprimirinformacoes(lista);
+        break;
+
+        default:printf("Comando invalido");
+        break;
+     }
+
+       printf("\nVoltar ao menu?");
+       gets(opcao);
+       fflush(stdin);
+       
+        
+    } while ((escolha != 'i' && escolha != 'e' && escolha != 'd' && escolha != 'm') && strcmp(opcao, "sim")==0);
+    
+} 

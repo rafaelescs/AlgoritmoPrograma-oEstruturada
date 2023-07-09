@@ -1,0 +1,253 @@
+#include <stdio.h>  
+#include <locale.h>
+#include <string.h>
+#include <stdlib.h>
+
+#define maximoUsuarios 1000
+#define maximoString 100
+#define maximoNome 100
+#define maximoEmail 50
+#define maximoSexo 2
+
+
+int ID[maximoUsuarios];
+char nome[maximoUsuarios][maximoString]; 
+char sexo[maximoUsuarios][maximoString]; 
+char email[maximoUsuarios][maximoString];    
+char endereço[maximoUsuarios][maximoString];   
+double altura[maximoUsuarios];  
+int vacina[maximoUsuarios];     
+int numCadastro = 0;
+
+int gerarNumeroAleatorio(int min, int max) {
+    return min + rand() % (max - min + 1);
+}
+void imprimirCadastro(int index) {
+    printf("ID: %d\n", ID[index]);     
+    printf("Nome: %s\n", nome[index]);
+    printf("Email: %s\n", email[index]);
+    printf("Sexo: %s\n", sexo[index]);
+    printf("Endereco: %s\n", endereço[index]);
+    printf("Altura: %.2f\n", altura[index]);
+    printf("Vacina: %s\n\n", (vacina[index] == 1) ? "Sim" : "Não");
+}
+
+void incluirCadastro() {
+    int id = gerarNumeroAleatorio(1000, 9999);
+    ID[numCadastro] = id;
+
+    printf("\nDigite o nome completo: ");
+    fgets(nome[numCadastro], maximoString, stdin);
+    nome[numCadastro][strcspn(nome[numCadastro], "\n")] = '\0';
+    do {
+        printf("\nDigite o email: ");
+        fgets(email[numCadastro], maximoString, stdin);
+        email[numCadastro][strcspn(email[numCadastro], "\n")] = '\0';
+    } while (strchr(email[numCadastro], '@') == NULL);
+    printf("\nDigite o sexo (Feminino, Masculino, Indiferente): ");
+    fgets(sexo[numCadastro], maximoString, stdin);
+    sexo[numCadastro][strcspn(sexo[numCadastro], "\n")] = '\0';
+    printf("\nDigite o endereco: ");
+    fgets(endereço[numCadastro], maximoString, stdin);
+    endereço[numCadastro][strcspn(endereço[numCadastro], "\n")] = '\0';
+    printf("\nDigite a altura (entre 1 e 2 metros): ");
+    scanf("%lf", &altura[numCadastro]);
+    getchar();
+    printf("\nRecebeu a vacina? (1 para sim, 0 para nao): ");
+    scanf("%d", &vacina[numCadastro]);
+    getchar();
+
+    numCadastro++;
+
+    printf("\nUsuario cadastrado com sucesso!\n\n");
+}
+
+void editarUsuario() {
+    int id;
+    printf("\nDigite o ID do usuario que deseja editar: ");
+    scanf("%d", &id);
+    getchar();
+
+    int i;
+    for (i = 0; i < numCadastro; i++) {
+        if (ID[i] == id) {
+            printf("\nDigite o novo nome completo: ");
+            fgets(nome[i], maximoString, stdin);
+            nome[i][strcspn(nome[i], "\n")] = '\0';
+
+        do {
+                printf("\nDigite o novo email: ");
+                fgets(email[i], maximoString, stdin);
+                email[i][strcspn(email[i], "\n")] = '\0';
+            } 
+        while (strchr(sexo[i], '@') == NULL);
+            printf("\nDigite o novo sexo (Feminino, Masculino, Indiferente): ");
+            fgets(sexo[i], maximoString, stdin);
+            sexo[i][strcspn(sexo[i], "\n")] = '\0';
+
+            printf("\nDigite o novo endereco: ");
+            fgets(endereço[i], maximoString, stdin);
+            endereço[i][strcspn(endereço[i], "\n")] = '\0';
+
+            printf("\nDigite a nova altura (entre 1 e 2 metros): ");
+            scanf("%lf", &altura[i]);
+            getchar();
+
+            printf("\nRecebeu a vacina? (1 para sim, 0 para nao): ");
+            scanf("%d", &vacina[i]);
+            getchar();
+
+            printf("\nUsuario editado com sucesso!\n\n");
+            return;
+        }
+    }
+
+    printf("Usuario nao encontrado.\n\n");
+}
+
+void excluirUsuario() {
+    int id;
+    printf("\nDigite o ID do usuario que deseja excluir: ");
+    scanf("%d", &id);
+    getchar();
+
+    int i;
+    for (i = 0; i < numCadastro; i++) {
+        if (ID[i] == id) {
+            int j;
+            for (j = i; j < numCadastro - 1; j++) {
+                ID[j] = ID[j + 1];
+                strcpy(nome[j], nome[j + 1]);
+                strcpy(sexo[j], sexo[j + 1]);
+                strcpy(sexo[j], sexo[j + 1]);
+                strcpy(endereço[j], endereço[j + 1]);
+                altura[j] = altura[j + 1];
+                vacina[j] = vacina[j + 1];
+            }
+
+            numCadastro--;
+
+            printf("\nUsuario excluido com sucesso!\n\n");
+            return;
+        }
+    }
+
+    printf("\nUsuario nao encontrado.\n\n");
+}
+
+void buscarUsuario() {
+    char email[maximoString];
+    printf("\nDigite o email do usuario que deseja buscar: ");
+    fgets(email, maximoString, stdin);
+    email[strcspn(email, "\n")] = '\0'; 
+    int i;
+    for (i = 0; i < numCadastro; i++) {
+        if (strcmp(sexo[i], email) == 0) {  
+            printf("\nUsuario encontrado:\n");
+            imprimirCadastro(i);
+            return;
+        }
+    }
+
+    printf("\nUsuario nao encontrado.\n\n");
+}
+
+void imprimirCadastros() {
+    int i;
+    printf("\nLista de Usuarios:\n");
+    for (i = 0; i < numCadastro; i++) {
+        imprimirCadastro(i);
+    }
+}
+
+void fazerBackup(int ID_backup[], char nome_backup[][maximoString], char sexo_backup[][maximoString], char sexo_backup[][maximoString], char endereço_backup[][maximoString], double altura_backup[], int vacina_backup[]) {
+    int i;
+    for (i = 0; i < numCadastro; i++) {
+        ID_backup[i] = ID[i];
+        strcpy(nome_backup[i], nome[i]);     
+        strcpy(sexo_backup[i], sexo[i]);
+        strcpy(sexo_backup[i], sexo[i]);
+        strcpy(endereço_backup[i], endereço[i]);
+        altura_backup[i] = altura[i];
+        vacina_backup[i] = vacina[i];
+    }
+
+    printf("\nBackup realizado com sucesso!\n\n");
+}
+
+void restaurarDados(const int ID_backup[], const char nome_backup[][maximoString], const char sexo_backup[][maximoString], const char sexo_backup[][maximoString], const char endereço_backup[][maximoString], const double altura_backup[], const int vacina_backup[]) {
+    int i;
+    for (i = 0; i < numCadastro; i++) {
+        ID[i] = ID_backup[i];
+        strcpy(nome[i], nome_backup[i]);        
+        strcpy(sexo[i], sexo_backup[i]);
+        strcpy(sexo[i], sexo_backup[i]);          
+        strcpy(endereço[i], endereço_backup[i]);
+        altura[i] = altura_backup[i];
+        vacina[i] = vacina_backup[i];
+    }
+
+    printf("\nDados restaurados com sucesso!\n\n");
+}
+int main() {
+    int opcao;
+    int idsBackup[maximoUsuarios];
+    char nomesBackup[maximoUsuarios][maximoNome];
+    char emailsBackup[maximoUsuarios][maximoEmail];
+    char sexoBackup[maximoUsuarios][maximoSexo];
+    char enderecosBackup[maximoUsuarios];
+    double alturasBackup[maximoUsuarios];
+    int vacinasBackup[maximoUsuarios];
+    int numCadastroBackup = 0;
+
+    srand(time(NULL));
+
+    do {
+        printf("Deseja a opção que você deseja:\n");
+        printf("1. Adicionar usuário\n");
+        printf("2. Editar usuario\n");
+        printf("3. Excluir usuario\n");
+        printf("4. Buscar usuario pelo email\n");
+        printf("5. Imprimir todos os usuarios cadastrados\n");
+        printf("6. Fazer backup dos usuarios cadastrados\n");
+        printf("7. Restaurar dados\n");
+        printf("0. Sair\n");
+        printf("-------------------\n");
+        printf("Digite uma opcao: ");
+        scanf("%d", &opcao);
+
+        switch (opcao) {
+            case 1:
+                adicionarUsuario();
+                break;
+            case 2:
+                editarUsuario();
+                break;
+            case 3:
+                excluirUsuario();
+                break;
+            case 4:
+                buscarUsuarioPorEmail();
+                break;
+            case 5:
+                imprimirTodosUsuarios();
+                break;
+            case 6:
+                fazerBackupUsuarios(idsBackup, nomesBackup, emailsBackup, generosBackup, enderecosBackup, alturasBackup, vacinasBackup, &numCadastroBackup);
+                break;
+            case 7:
+                restaurarDados(idsBackup, nomesBackup, emailsBackup, generosBackup, enderecosBackup, alturasBackup, vacinasBackup, &numCadastroBackup);
+                break;
+            case 0:
+                printf("Saindo...\n");
+                break;
+            default:
+                printf("Opcao invalida.\n");
+                break       
+            } 
+        }
+        printf("\n");
+    } while (opcao != 0);
+
+    return 0;
+}
